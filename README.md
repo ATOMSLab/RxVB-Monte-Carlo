@@ -1,4 +1,4 @@
-# RxVB_Chemisorption
+# RxVB-Monte-Carlo
 
 Supporting information for "A reaction volume bias Monte Carlo trial for sampling chemisorption in confinement"
 (S. Sharlin, H. W. Hatch, D. W. Siderius, T. R. Josephson).
