@@ -1,0 +1,12 @@
+B_num/450 .xyz all : <n|n>=1> = 2.3819 +- 0.0133  (reps 32, reactant frames 5445)  P_occ=0.949
+B_num/450 .xyz even: <n|n>=1> = 2.3669 +- 0.0171  (reps 16, reactant frames 2641)  P_occ=0.953
+B_num/450 .xyz odd : <n|n>=1> = 2.3969 +- 0.0203  (reps 16, reactant frames 2804)  P_occ=0.946
+B_dens/dens150 .xyz all : <n|n>=1> = 1.1640 +- 0.0045  (reps 32, reactant frames 22396)  P_occ=0.353
+B_dens/dens150 .xyz even: <n|n>=1> = 1.1647 +- 0.0066  (reps 16, reactant frames 11118)  P_occ=0.353
+B_dens/dens150 .xyz odd : <n|n>=1> = 1.1632 +- 0.0064  (reps 16, reactant frames 11278)  P_occ=0.353
+B_dens/dens300 .xyz all : <n|n>=1> = 1.5283 +- 0.0071  (reps 32, reactant frames 12324)  P_occ=0.727
+B_dens/dens300 .xyz even: <n|n>=1> = 1.5240 +- 0.0112  (reps 16, reactant frames 6140)  P_occ=0.720
+B_dens/dens300 .xyz odd : <n|n>=1> = 1.5326 +- 0.0090  (reps 16, reactant frames 6184)  P_occ=0.734
+B_dens/dens50 .xyz all : <n|n>=1> = 1.0444 +- 0.0033  (reps 32, reactant frames 34648)  P_occ=0.111
+B_dens/dens50 .xyz even: <n|n>=1> = 1.0388 +- 0.0047  (reps 16, reactant frames 17224)  P_occ=0.109
+B_dens/dens50 .xyz odd : <n|n>=1> = 1.0500 +- 0.0044  (reps 16, reactant frames 17424)  P_occ=0.112

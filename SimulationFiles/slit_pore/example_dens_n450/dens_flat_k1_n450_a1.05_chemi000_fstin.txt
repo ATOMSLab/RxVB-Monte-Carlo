@@ -1,0 +1,41 @@
+
+MonteCarlo
+RandomMT19937 seed=334896438
+# particle types: A <-> C (fixed, K sites); B <-> D (fluid). B GCMC-filled.
+Configuration particle_type=A:a.txt,B:b.txt,C:c.txt,D:d.txt     sigma=1.0     epsilon=1 epsilonC_D=100     cutoff=1.05     group=fluid,product_fluid product_fluid_particle_type=D     fluid_particle_type=B,D     xyz_file=dens_flat_k1_n450_a1.05_chemi_initial.xyz
+RefPotential VisitModel=DontVisitModel
+NeighborCriteria site_type0=A site_type1=B site_type0_alt=C site_type1_alt=D maximum_distance=1.05 minimum_distance=1.0
+Potential Model=SquareWell VisitModel=VisitModelCell min_length=max_cutoff EnergyMap=EnergyMapNeighborCriteria
+Potential Model=ModelHardShape shape_file=dens_flat_k1_n450_a1.05_chemi_shape_file.txt group=fluid
+WriteModelParams output_file=dens_flat_k1_n450_a1.05_chemi_model_params.txt
+ThermoParams beta=1.0 chemical_potential=10,10
+Metropolis
+TrialTranslate weight_per_number_fraction=1 particle_type=B tunable_param=0.13
+TrialTranslate weight_per_number_fraction=1 particle_type=D tunable_param=0.06
+TrialSwapPosition weight=0.1 particle_types=B,D
+CheckEnergy trials_per_update=1000000 decimal_places=6
+Checkpoint checkpoint_file=dens_flat_k1_n450_a1.05_chemi0_checkpoint.fst num_hours=1 num_hours_terminate=159.54999999999998
+
+# gcmc initialization: fill B to num_particles
+Let [write]=trials_per_write=1000000 output_file=dens_flat_k1_n450_a1.05_chemin0s0
+Log [write]_eq.csv
+Tune
+Run until_num_particles=450 particle_type=B Trial=TrialAdd
+
+# equilibrate
+ThermoParams beta=1.0 chemical_potential=0,0,0,-99
+TrialRxVB weight=0.0001 target_particle_type=A target_site=A1 target_particle_type_morph=C particle_type=B site=B1 particle_type_morph=D print_num_accepted=true reference_index=0 write_weights=true
+Metropolis trials_per_cycle=1000000 cycles_to_complete=100
+Run until=complete
+Remove name=Tune,Log
+
+# production
+Metropolis trials_per_cycle=1000000 cycles_to_complete=10000
+Log [write].csv
+NumParticles [write]_num2.csv append=true rewrite_header=false particle_type=C
+CPUTime [write]_cpu.csv append=true
+Run until=complete
+
+# continue until all simulations on the job are complete
+WriteFileAndCheck sim=0 sim_start=0 sim_end=31 file_prefix=dens_flat_k1_n450_a1.05_chemin0s file_suffix=_finished.txt output_file=dens_flat_k1_n450_a1.05_chemin0_terminate.txt
+Run until_file_exists=dens_flat_k1_n450_a1.05_chemin0_terminate.txt trials_per_file_check=1000000

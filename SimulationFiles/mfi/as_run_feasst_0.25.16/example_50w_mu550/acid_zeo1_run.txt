@@ -1,0 +1,67 @@
+
+MonteCarlo
+RandomMT19937 seed 767226398
+Configuration side_length0 20.022 side_length1 19.899 side_length2 13.383     particle_type0 oh.fstprt particle_type1 spce_with_dummy.fstprt     particle_type2 o-.fstprt particle_type3 h3o.fstprt     particle_type4 framework.fstprt particle_type5 block.fstprt     group0 mobile mobile_particle_type0 0 mobile_particle_type1 1 mobile_particle_type2 2 mobile_particle_type3 3     group1 framework framework_particle_type0 4     group2 gas gas_particle_type0 5     add_particles_of_type0 1 add_particles_of_type4 1
+Potential VisitModel Ewald tolerance 1e-4 tolerance_num_sites 2000
+Potential Model ModelTwoBodyFactory model0 LennardJonesForceShift model1 ChargeScreened erfc_table_size 2e4
+Potential Model ChargeScreenedIntra VisitModel VisitModelBond
+Potential Model ChargeSelf
+Potential Model ModelHardShape shape_file MFI_Zeolite_111_1-54_blocks.txt cavity false group gas
+ZeroBackground
+RefPotential VisitModel DontVisitModel
+ThermoParams beta 0.3224459920716516 chemical_potential0 10 chemical_potential1 10
+Metropolis
+TrialTranslate weight_per_number_fraction 1 number_fraction_exclude_type0 4 particle_type 1
+TrialTranslate weight_per_number_fraction 1 number_fraction_exclude_type0 4 particle_type 3
+TrialParticlePivot weight_per_number_fraction 1 number_fraction_exclude_type0 4 particle_type 0
+TrialParticlePivot weight_per_number_fraction 1 number_fraction_exclude_type0 4 particle_type 1
+TrialParticlePivot weight_per_number_fraction 1 number_fraction_exclude_type0 4 particle_type 2
+TrialParticlePivot weight_per_number_fraction 1 number_fraction_exclude_type0 4 particle_type 3
+TrialSwapPosition weight 0.1 particle_types 1,3
+CheckEnergy trials_per_update 1000000 decimal_places 6
+Checkpoint checkpoint_file runs/temp373/50w/mu_550/acid_zeo1_checkpoint.fst num_hours 1 num_hours_terminate 319.15
+
+# write framework once for visualization
+Movie output_file runs/temp373/50w/mu_550/acid_zeon0s1_framework.xyz group framework clear_file true
+WriteStepper analyze_name Movie
+Remove name Movie
+
+# gcmc initialization
+TrialAdd particle_type 1
+Log trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_fill.csv
+Tune
+Run until_num_particles 50 particle_type 1
+WriteStepper analyze_name Log
+Remove name0 TrialAdd name1 Log
+
+# equilibrate
+ThermoParams beta 0.3224459920716516 chemical_potential0 0 chemical_potential1 0 chemical_potential2 0 chemical_potential3 -550.0
+TrialMorph weight 0.005 particle_type0 0 particle_type_morph0 2 particle_type1 1 particle_type_morph1 3 print_num_accepted true reference_index 0
+TrialMorph weight 0.005 particle_type0 2 particle_type_morph0 0 particle_type1 3 particle_type_morph1 1 print_num_accepted true reference_index 0
+#FlatHistogram Macrostate MacrostateNumParticles particle_type 0 width 1 max 1 min 0 #    Bias WLTM min_sweeps 200 min_flatness 22 collect_flatness 18 min_collect_sweeps 1
+#Bias TransitionMatrix min_sweeps 200
+#CriteriaWriter  trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s001_crit.csv
+#CriteriaUpdater trials_per_update 1e5
+## Implement a position swap (that works with rigid particles?)
+Metropolis trials_per_cycle 1000000 cycles_to_complete 10000.0
+Log          trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_eq.csv
+Movie        trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_eq.xyz group mobile
+NumParticles trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_eq_num2.csv append true rewrite_header false particle_type 2
+NumParticles trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_eq_num3.csv append true rewrite_header false particle_type 3
+Run until complete
+Remove name0 Tune name1 Log name2 Movie name3 NumParticles
+#
+## production
+Metropolis trials_per_cycle 1000000 cycles_to_complete 1000000.0
+Log            trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1.csv
+Movie          trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1.xyz group mobile
+Energy         trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_en.csv append true rewrite_header false
+NumParticles   trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_num2.csv append true rewrite_header false particle_type 2
+NumParticles   trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_num3.csv append true rewrite_header false particle_type 3
+CPUTime        trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_cpu.csv  append true
+ProfileCPU     trials_per_write 1000000 output_file runs/temp373/50w/mu_550/acid_zeon0s1_profile.csv
+Run until complete
+
+# continue until all simulations on the node are complete
+WriteFileAndCheck sim 1 sim_start 0 sim_end 31 file_prefix runs/temp373/50w/mu_550/acid_zeon0s file_suffix _finished.txt output_file runs/temp373/50w/mu_550/acid_zeon0_terminate.txt
+Run until_file_exists runs/temp373/50w/mu_550/acid_zeon0_terminate.txt trials_per_file_check 1000000

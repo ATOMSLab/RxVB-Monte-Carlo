@@ -1,0 +1,59 @@
+
+MonteCarlo
+RandomMT19937 seed 778819190
+# particle types:
+# 0,A <---> 2,C (fixed)
+# 1,B <---> 3,D (fluid)
+# start with 1 A and num_particles B
+# C-D attraction, all else is hard sphere only
+Configuration particle_type0 /feasst/particle/atom.fstprt particle_type1 /feasst/particle/atom.fstprt particle_type2 /feasst/particle/atom.fstprt particle_type3 /feasst/particle/atom.fstprt     sigma 1.0     epsilon 1 epsilon2_3 100     cutoff 1.05     group0 product_fluid product_fluid_particle_type0 3     xyz_file n450.xyz group1 fluid fluid_particle_type0 1 fluid_particle_type1 3
+#    add_particles_of_type0 1 xyz_file chem_initial.xyz group1 fluid fluid_particle_type0 1 fluid_particle_type1 3
+#    cutoff 1.0 cutoff0_1 1.05 cutoff2_3 1.05
+RefPotential VisitModel DontVisitModel
+Potential Model SquareWell VisitModel VisitModelCell min_length max_cutoff
+Potential Model ModelHardShape shape_file chem_shape_file.txt group fluid
+WriteModelParams output_file chem_model_params.txt
+ThermoParams beta 1.0 chemical_potential0 10 chemical_potential1 10
+Metropolis
+TrialTranslate weight_per_number_fraction 1 particle_type 1 tunable_param 0.13
+TrialTranslate weight_per_number_fraction 1 particle_type 3 tunable_param 0.06
+TrialSwapPosition weight 0.1 particle_types 1,3
+CheckEnergy trials_per_update 1000000 decimal_places 6
+Checkpoint checkpoint_file chem1_checkpoint.fst num_hours 1 num_hours_terminate 159.54999999999998
+
+# gcmc initialization
+TrialAdd particle_type 1
+Log trials_per_write 1000000 output_file chemn0s1_eq.csv
+Tune
+Run until_num_particles 450 particle_type 1
+Remove name TrialAdd
+
+# equilibrate
+ThermoParams beta 1.0 chemical_potential0 0 chemical_potential1 0 chemical_potential2 0 chemical_potential3 -99
+TrialMorph weight 5e-05 particle_type0 0 particle_type_morph0 2 particle_type1 1 particle_type_morph1 3 print_num_accepted true reference_index 0
+TrialMorph weight 5e-05 particle_type0 2 particle_type_morph0 0 particle_type1 3 particle_type_morph1 1 print_num_accepted true reference_index 0
+#FlatHistogram Macrostate MacrostateNumParticles particle_type 0 width 1 max 1 min 0 #    Bias WLTM min_sweeps 200 min_flatness 22 collect_flatness 18 min_collect_sweeps 1
+#Bias TransitionMatrix min_sweeps 200
+#CriteriaWriter  trials_per_write 1000000 output_file chemn0s001_crit.csv
+#CriteriaUpdater trials_per_update 1e5
+## Implement a position swap (that works with rigid particles?)
+Metropolis trials_per_cycle 1000000 cycles_to_complete 100.0
+Movie          trials_per_write 1000000 output_file chemn0s1_eq.xyz
+Run until complete
+Remove name0 Tune name1 Log name2 Movie
+#
+## production
+Metropolis trials_per_cycle 1000000 cycles_to_complete 10000.0
+Log            trials_per_write 1000000 output_file chemn0s1.csv
+Movie          trials_per_write 1000000 output_file chemn0s1.xyz
+#Tune           trials_per_write 1000000 output_file chemn0s1_tune.csv
+Energy         trials_per_write 1000000 output_file chemn0s1_en.csv append true rewrite_header false
+NumParticles   trials_per_write 1000000 output_file chemn0s1_num2.csv append true rewrite_header false particle_type 2
+#AnalyzeExample trials_per_write 1000000 output_file chemn0s1_xyz.csv append true rewrite_header false group product_fluid
+CPUTime        trials_per_write 1000000 output_file chemn0s1_cpu.csv  append true
+ProfileCPU     trials_per_write 1000000 output_file chemn0s1_profile.csv
+Run until complete
+
+# continue until all simulations on the node are complete
+WriteFileAndCheck sim 1 sim_start 0 sim_end 31 file_prefix chemn0s file_suffix _finished.txt output_file chemn0_terminate.txt
+Run until_file_exists chemn0_terminate.txt trials_per_file_check 1000000

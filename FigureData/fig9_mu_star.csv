@@ -1,0 +1,17 @@
+scheme,loading,mu_star,ci_low,ci_high,settled
+biased,1w,-479.9,-480.0,-479.7,yes
+biased,2w,-533.8,-534.1,-533.4,yes
+biased,3w,-573.8,-576.3,-570.4,yes
+biased,4w,-588.8,-593.4,-580.4,yes
+biased,6w,-601.2,-606.0,-598.5,no
+biased,8w,-602.8,-610.9,-597.2,no
+biased,10w,-604.1,-611.1,-598.5,no
+biased,50w,-591.9,-596.3,-588.7,no
+unbiased,1w,-479.8,-479.9,-479.7,yes
+unbiased,2w,-533.6,-533.9,-533.4,yes
+unbiased,3w,-575.7,-577.9,-573.6,no
+unbiased,4w,-581.9,-587.5,-580.1,yes
+unbiased,6w,-600.7,-603.8,-598.6,no
+unbiased,8w,-597.0,-602.4,-593.6,no
+unbiased,10w,-596.3,-601.6,-591.6,no
+unbiased,50w,-587.4,-588.6,-586.1,no

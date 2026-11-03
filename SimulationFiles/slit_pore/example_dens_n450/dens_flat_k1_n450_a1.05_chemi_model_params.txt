@@ -1,0 +1,47 @@
+# This is a FEASST Configuration::model_param_file which may override the default Lorentz-Berthelot combining rules.
+# Each line has a 3- or 4-column space-separated format:
+# [parameter] [site type] [value]
+# [parameter] [site type 1] [site type 2] [value]
+
+sigma A 1
+sigma B 1
+sigma C 1
+sigma D 1
+sigma A A 1
+sigma A B 1
+sigma A C 1
+sigma A D 1
+sigma B B 1
+sigma B C 1
+sigma B D 1
+sigma C C 1
+sigma C D 1
+sigma D D 1
+epsilon A 1
+epsilon B 1
+epsilon C 1
+epsilon D 1
+epsilon A A 1
+epsilon A B 1
+epsilon A C 1
+epsilon A D 1
+epsilon B B 1
+epsilon B C 1
+epsilon B D 1
+epsilon C C 1
+epsilon C D 100
+epsilon D D 1
+cutoff A 1.05
+cutoff B 1.05
+cutoff C 1.05
+cutoff D 1.05
+cutoff A A 1.05
+cutoff A B 1.05
+cutoff A C 1.05
+cutoff A D 1.05
+cutoff B B 1.05
+cutoff B C 1.05
+cutoff B D 1.05
+cutoff C C 1.05
+cutoff C D 1.05
+cutoff D D 1.05
